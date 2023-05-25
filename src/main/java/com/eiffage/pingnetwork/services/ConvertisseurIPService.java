@@ -1,8 +1,10 @@
 package com.eiffage.pingnetwork.services;
 
 /**
+ * Classe De convertisseur IP
  *
- * @author olicl
+ * @author clement olivier
+ * @date 25-05-2023
  */
 public class ConvertisseurIPService {
 
