@@ -222,8 +222,14 @@ public class IHM extends javax.swing.JFrame {
                         if (line.contains("Ethernet Ethernet")) {
                             lecture = true;
                             compteur = 0;
-                            camera.getListeAllIPNetwork().add(line.substring(15, line.length() - 2));
-                            jTextAreaAffichage.append(line + " " + compteurInterface + "\n");
+                            camera.getListeCarteReseau().add(line.substring(15, line.length() - 2));
+                            jTextAreaAffichage.append("------------------------------------------------\n" + line + " " + compteurInterface + "\n");
+                            compteurInterface++;
+                        } else if (line.contains("sans fil Wi-Fi")) {
+                            lecture = true;
+                            compteur = 0;
+                            camera.getListeCarteReseau().add("Wi-fi");
+                            jTextAreaAffichage.append("------------------------------------------------\n" + line + " " + compteurInterface + "\n");
                             compteurInterface++;
                         }
 
@@ -271,9 +277,10 @@ public class IHM extends javax.swing.JFrame {
                     while ((line = input.readLine()) != null) {
                         if (line.contains(nouvelleAdresse) && line.startsWith("Interface")) {
                             lecture = true;
+                            jTextAreaAffichage.append(line + "\n");
                         }
 
-                        if (line.startsWith("Interface") && lecture == true || line.contains("dynamique") && lecture == true) {
+                        if (line.contains("dynamique") && lecture == true) {
                             switch (modelEquipement) {
                                 case "Hanwha" -> {
                                     for (String s : camera.getListeAdresseMacHanwha()) {
@@ -296,7 +303,8 @@ public class IHM extends javax.swing.JFrame {
                                         }
                                     }//FIN FOR
                                 }
-                                case "Tout" -> jTextAreaAffichage.append(line + "\n");
+                                case "Tout" ->
+                                    jTextAreaAffichage.append(line + "\n");
                                 default -> {
                                 }
                             }
@@ -335,7 +343,7 @@ public class IHM extends javax.swing.JFrame {
 
         //Choisir la carte reseau a changer
         int reseauName = Integer.parseInt(JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]"));
-        camera.setCarteReseau(camera.getListeAllIPNetwork().get(reseauName));
+        camera.setCarteReseau(camera.getListeCarteReseau().get(reseauName));
         jTextAreaAffichage.append("Carte définie : " + camera.getCarteReseau() + "\n");
     }
 
@@ -345,6 +353,7 @@ public class IHM extends javax.swing.JFrame {
      */
     private void scannerSonReseau() {
         try {
+            modelEquipement = jComboBoxEquipement.getItemAt(jComboBoxEquipement.getSelectedIndex());
             //2 Choisir une adresse IP
             jTextAreaAffichage.setText("");
             nouvelleAdresse = jTextFieldIP.getText();

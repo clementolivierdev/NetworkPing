@@ -12,7 +12,7 @@ public class Camera {
     private List<String> listeAdresseMacHanwha = new ArrayList<>();
     private List<String> listeAdresseMacUniview = new ArrayList<>();
     private List<String> listeAdresseMacAntenne = new ArrayList<>();
-    private List<String> listeAllIPNetwork = new ArrayList<>();
+    private List<String> listeCarteReseau = new ArrayList<>();
     private String carteReseau;
 
     public Camera() {
@@ -33,12 +33,12 @@ public class Camera {
         this.carteReseau = carteReseau;
     }
 
-    public List<String> getListeAllIPNetwork() {
-        return listeAllIPNetwork;
+    public List<String> getListeCarteReseau() {
+        return listeCarteReseau;
     }
 
-    public void setListeAllIPNetwork(List<String> listeAllIPNetwork) {
-        this.listeAllIPNetwork = listeAllIPNetwork;
+    public void setListeCarteReseau(List<String> listeAllIPNetwork) {
+        this.listeCarteReseau = listeAllIPNetwork;
     }
 
     public List<String> getListeAdresseMacUniview() {
