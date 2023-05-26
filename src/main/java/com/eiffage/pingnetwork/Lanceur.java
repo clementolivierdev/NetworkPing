@@ -3,6 +3,7 @@ package com.eiffage.pingnetwork;
 import com.eiffage.pingnetwork.entities.Camera;
 import com.eiffage.pingnetwork.services.CommandLineInterfaceService;
 import com.eiffage.pingnetwork.services.ConvertisseurIPService;
+import com.eiffage.pingnetwork.services.RegexService;
 import com.eiffage.pingnetwork.vue.IHM;
 
 /**
@@ -17,8 +18,9 @@ public class Lanceur {
         CommandLineInterfaceService commandLineInterfaceService = new CommandLineInterfaceService();
         ConvertisseurIPService convertisseurIPService = new ConvertisseurIPService();
         Camera camera = new Camera();
+        RegexService regex = new RegexService();
         IHM ihm = new IHM();
-        ihm.setClasses(commandLineInterfaceService, convertisseurIPService, camera);
+        ihm.setClasses(commandLineInterfaceService, convertisseurIPService, camera, regex);
         ihm.setVisible(true);
     }
 
