@@ -1,13 +1,11 @@
 package com.eiffage.pingnetwork.vue;
 
-import com.eiffage.pingnetwork.services.CommandLineInterfaceService;
-import com.eiffage.pingnetwork.services.ConvertisseurIPService;
+import com.eiffage.pingnetwork.entities.Camera;
+import com.eiffage.pingnetwork.services.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -20,12 +18,11 @@ import javax.swing.JOptionPane;
  */
 public class IHM extends javax.swing.JFrame {
 
-    private List<String> ip_reseau = new ArrayList<>();
-
     private CommandLineInterfaceService commandLineInterfaceService;
     private ConvertisseurIPService convertisseurIPService;
+    private Camera camera;
 
-    private String Nomrs = "";
+    private String modelEquipement = "";
     private String nouvelleAdresse = "";
     private int compteurInterface = 0;
 
@@ -45,6 +42,8 @@ public class IHM extends javax.swing.JFrame {
         jTextAreaAffichage = new javax.swing.JTextArea();
         jButtonDefinirCarte = new javax.swing.JButton();
         jButtonQuitter = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jComboBoxEquipement = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IP SCANNER");
@@ -83,6 +82,10 @@ public class IHM extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setText("type d'équipements :");
+
+        jComboBoxEquipement.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tout", "Hanwha", "Uniview", "Antenne" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -95,36 +98,42 @@ public class IHM extends javax.swing.JFrame {
                 .addContainerGap(24, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)
-                        .addComponent(jTextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)
+                        .addComponent(jButtonQuitter)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFieldIP, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                            .addComponent(jComboBoxEquipement, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButtonDefinirCarte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonScan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(27, 27, 27))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButtonQuitter)
-                        .addContainerGap())))
+                        .addGap(27, 27, 27))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
+                        .addGap(19, 19, 19)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addGap(37, 37, 37))
+                            .addComponent(jLabel2)
+                            .addComponent(jComboBoxEquipement, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonDefinirCarte))
+                        .addGap(74, 74, 74))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButtonDefinirCarte)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonScan)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonScan)
+                            .addComponent(jTextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
                         .addGap(18, 18, 18)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addComponent(jButtonQuitter))
         );
 
@@ -139,6 +148,7 @@ public class IHM extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldIPActionPerformed
 
     private void jButtonDefinirCarteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDefinirCarteActionPerformed
+        modelEquipement = jComboBoxEquipement.getItemAt(jComboBoxEquipement.getSelectedIndex());
         choisirSaCarteReseau();
     }//GEN-LAST:event_jButtonDefinirCarteActionPerformed
 
@@ -185,7 +195,9 @@ public class IHM extends javax.swing.JFrame {
     private javax.swing.JButton jButtonDefinirCarte;
     private javax.swing.JButton jButtonQuitter;
     private javax.swing.JButton jButtonScan;
+    private javax.swing.JComboBox<String> jComboBoxEquipement;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextAreaAffichage;
     private javax.swing.JTextField jTextFieldIP;
@@ -210,7 +222,7 @@ public class IHM extends javax.swing.JFrame {
                         if (line.contains("Ethernet Ethernet")) {
                             lecture = true;
                             compteur = 0;
-                            ip_reseau.add(line.substring(15, line.length() - 2));
+                            camera.getListeAllIPNetwork().add(line.substring(15, line.length() - 2));
                             jTextAreaAffichage.append(line + " " + compteurInterface + "\n");
                             compteurInterface++;
                         }
@@ -262,7 +274,33 @@ public class IHM extends javax.swing.JFrame {
                         }
 
                         if (line.startsWith("Interface") && lecture == true || line.contains("dynamique") && lecture == true) {
-                            jTextAreaAffichage.append(line + "\n");
+                            switch (modelEquipement) {
+                                case "Hanwha" -> {
+                                    for (String s : camera.getListeAdresseMacHanwha()) {
+                                        if (line.contains(s)) {
+                                            jTextAreaAffichage.append(line + "\n");
+                                        }
+                                    }//FIN FOR
+                                }
+                                case "Uniview" -> {
+                                    for (String s : camera.getListeAdresseMacUniview()) {
+                                        if (line.contains(s)) {
+                                            jTextAreaAffichage.append(line + "\n");
+                                        }
+                                    }//FIN FOR
+                                }
+                                case "Antenne" -> {
+                                    for (String s : camera.getListeAdresseMacAntenne()) {
+                                        if (line.contains(s)) {
+                                            jTextAreaAffichage.append(line + "\n");
+                                        }
+                                    }//FIN FOR
+                                }
+                                case "Tout" -> jTextAreaAffichage.append(line + "\n");
+                                default -> {
+                                }
+                            }
+
                         }
 
                         if (line.contains(".255") && line.contains("-ff-") && lecture == true) {
@@ -297,8 +335,8 @@ public class IHM extends javax.swing.JFrame {
 
         //Choisir la carte reseau a changer
         int reseauName = Integer.parseInt(JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]"));
-        Nomrs = ip_reseau.get(reseauName);
-        jTextAreaAffichage.append("Carte définie : " + Nomrs + "\n");
+        camera.setCarteReseau(camera.getListeAllIPNetwork().get(reseauName));
+        jTextAreaAffichage.append("Carte définie : " + camera.getCarteReseau() + "\n");
     }
 
     /*
@@ -317,7 +355,7 @@ public class IHM extends javax.swing.JFrame {
             StringBuilder monReseau = new StringBuilder();
             monReseau.append(splitIP[0]).append(".").append(splitIP[1]).append(".").append(splitIP[2]).append(".");
             //Changer son adresse IP
-            String commande = "elevate.exe powershell.exe netsh interface ip set address “" + Nomrs + "” static " + nouvelleAdresse + " " + mask;
+            String commande = "elevate.exe powershell.exe netsh interface ip set address “" + camera.getCarteReseau() + "” static " + nouvelleAdresse + " " + mask;
             commandLineInterfaceService.executeCommand(commande);
             Thread.sleep(4000);
             //3 ping son reseau
@@ -333,8 +371,9 @@ public class IHM extends javax.swing.JFrame {
         }
     }
 
-    public void setClasses(CommandLineInterfaceService commandLineInterfaceService, ConvertisseurIPService convertisseurIPService) {
+    public void setClasses(CommandLineInterfaceService commandLineInterfaceService, ConvertisseurIPService convertisseurIPService, Camera camera) {
         this.convertisseurIPService = convertisseurIPService;
         this.commandLineInterfaceService = commandLineInterfaceService;
+        this.camera = camera;
     }
 }
