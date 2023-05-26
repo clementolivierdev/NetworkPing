@@ -30,6 +30,7 @@ public class IHM extends javax.swing.JFrame {
     //Constructeur
     public IHM() {
         initComponents();
+        jButtonScan.setEnabled(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -347,6 +348,7 @@ public class IHM extends javax.swing.JFrame {
         if (regex.verifierNombre(reseauName) && Integer.parseInt(reseauName) <= camera.getListeCarteReseau().size()) {
             camera.setCarteReseau(camera.getListeCarteReseau().get(Integer.parseInt(reseauName)));
             jTextAreaAffichage.append("------------------------------------------------\nCarte définie : " + camera.getCarteReseau() + "\n");
+            jButtonScan.setEnabled(true);
         } else {
             jTextAreaAffichage.append("------------------------------------------------\nAucune Carte sélectionnée");
         }
