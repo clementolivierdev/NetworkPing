@@ -21,6 +21,7 @@ public class IHM extends javax.swing.JFrame {
     private CommandLineInterfaceService commandLineInterfaceService;
     private ConvertisseurIPService convertisseurIPService;
     private Camera camera;
+    private RegexService regex;
 
     private String modelEquipement = "";
     private String nouvelleAdresse = "";
@@ -340,11 +341,15 @@ public class IHM extends javax.swing.JFrame {
         //Lecture Ethernet puis 6 lgnes apres stop
         //Chaque Adresse IP v4 dans une Liste au cas où l'utilisateur a des alias
         affichageCmd(p_ipconfig);
-
+        compteurInterface = 0;
         //Choisir la carte reseau a changer
-        int reseauName = Integer.parseInt(JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]"));
-        camera.setCarteReseau(camera.getListeCarteReseau().get(reseauName));
-        jTextAreaAffichage.append("Carte définie : " + camera.getCarteReseau() + "\n");
+        String reseauName = JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]");
+        if (regex.verifierNombre(reseauName) && Integer.parseInt(reseauName) <= camera.getListeCarteReseau().size()) {
+            camera.setCarteReseau(camera.getListeCarteReseau().get(Integer.parseInt(reseauName)));
+            jTextAreaAffichage.append("------------------------------------------------\nCarte définie : " + camera.getCarteReseau() + "\n");
+        } else {
+            jTextAreaAffichage.append("------------------------------------------------\nAucune Carte sélectionnée");
+        }
     }
 
     /*
@@ -356,33 +361,38 @@ public class IHM extends javax.swing.JFrame {
             modelEquipement = jComboBoxEquipement.getItemAt(jComboBoxEquipement.getSelectedIndex());
             //2 Choisir une adresse IP
             jTextAreaAffichage.setText("");
-            nouvelleAdresse = jTextFieldIP.getText();
-            //Détermine le masque automatiquement ainsi que la passerelle si besoin
-            String mask = convertisseurIPService.getIPv4Mask(nouvelleAdresse);
-            //Détermine l'ip reseau
-            String[] splitIP = nouvelleAdresse.split("\\.");
-            StringBuilder monReseau = new StringBuilder();
-            monReseau.append(splitIP[0]).append(".").append(splitIP[1]).append(".").append(splitIP[2]).append(".");
-            //Changer son adresse IP
-            String commande = "elevate.exe powershell.exe netsh interface ip set address “" + camera.getCarteReseau() + "” static " + nouvelleAdresse + " " + mask;
-            commandLineInterfaceService.executeCommand(commande);
-            Thread.sleep(4000);
-            //3 ping son reseau
-            commandLineInterfaceService.executeCommand("cmd.exe /C FOR /L %i in (1,1,20) do @ping " + monReseau + "%i -w 1 -n 1");
-            Thread.sleep(4000);
-            commandLineInterfaceService.executeCommand("cmd /C ping " + monReseau + "255 -w 1 -n 1");
-            Thread.sleep(500);
-            final Process ping_arp = commandLineInterfaceService.executeCommand("arp -a");
-            affichageCmdArp(ping_arp);
-            Thread.sleep(500);
+            if (regex.verifierIP(jTextFieldIP.getText())) {
+                nouvelleAdresse = jTextFieldIP.getText();
+                //Détermine le masque automatiquement ainsi que la passerelle si besoin
+                String mask = convertisseurIPService.getIPv4Mask(nouvelleAdresse);
+                //Détermine l'ip reseau
+                String[] splitIP = nouvelleAdresse.split("\\.");
+                StringBuilder monReseau = new StringBuilder();
+                monReseau.append(splitIP[0]).append(".").append(splitIP[1]).append(".").append(splitIP[2]).append(".");
+                //Changer son adresse IP
+                String commande = "elevate.exe powershell.exe netsh interface ip set address “" + camera.getCarteReseau() + "” static " + nouvelleAdresse + " " + mask;
+                commandLineInterfaceService.executeCommand(commande);
+                Thread.sleep(4000);
+                //3 ping son reseau
+                commandLineInterfaceService.executeCommand("cmd.exe /C FOR /L %i in (1,1,20) do @ping " + monReseau + "%i -w 1 -n 1");
+                Thread.sleep(4000);
+                commandLineInterfaceService.executeCommand("cmd /C ping " + monReseau + "255 -w 1 -n 1");
+                Thread.sleep(500);
+                final Process ping_arp = commandLineInterfaceService.executeCommand("arp -a");
+                affichageCmdArp(ping_arp);
+                Thread.sleep(500);
+            } else {
+                jTextAreaAffichage.append("------------------------------------------------\nVérifiez l'adresse IP inscrite");
+            }
         } catch (InterruptedException ex) {
             Logger.getLogger(IHM.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void setClasses(CommandLineInterfaceService commandLineInterfaceService, ConvertisseurIPService convertisseurIPService, Camera camera) {
+    public void setClasses(CommandLineInterfaceService commandLineInterfaceService, ConvertisseurIPService convertisseurIPService, Camera camera, RegexService regex) {
         this.convertisseurIPService = convertisseurIPService;
         this.commandLineInterfaceService = commandLineInterfaceService;
         this.camera = camera;
+        this.regex = regex;
     }
 }
