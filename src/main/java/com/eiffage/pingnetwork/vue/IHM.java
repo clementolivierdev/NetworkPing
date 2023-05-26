@@ -31,6 +31,7 @@ public class IHM extends javax.swing.JFrame {
     public IHM() {
         initComponents();
         jButtonScan.setEnabled(false);
+        jButtonDHCP.setEnabled(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -46,6 +47,7 @@ public class IHM extends javax.swing.JFrame {
         jButtonQuitter = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jComboBoxEquipement = new javax.swing.JComboBox<>();
+        jButtonDHCP = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IP SCANNER");
@@ -88,6 +90,13 @@ public class IHM extends javax.swing.JFrame {
 
         jComboBoxEquipement.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tout", "Hanwha", "Uniview", "Antenne" }));
 
+        jButtonDHCP.setText("DHCP");
+        jButtonDHCP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDHCPActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -100,6 +109,8 @@ public class IHM extends javax.swing.JFrame {
                 .addContainerGap(24, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButtonDHCP)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonQuitter)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -135,8 +146,11 @@ public class IHM extends javax.swing.JFrame {
                             .addComponent(jLabel1))
                         .addGap(18, 18, 18)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addComponent(jButtonQuitter))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonDHCP)
+                    .addComponent(jButtonQuitter))
+                .addGap(0, 8, Short.MAX_VALUE))
         );
 
         pack();
@@ -151,12 +165,16 @@ public class IHM extends javax.swing.JFrame {
 
     private void jButtonDefinirCarteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDefinirCarteActionPerformed
         modelEquipement = jComboBoxEquipement.getItemAt(jComboBoxEquipement.getSelectedIndex());
-        choisirSaCarteReseau();
+        choisirSaCarteReseau(true);
     }//GEN-LAST:event_jButtonDefinirCarteActionPerformed
 
     private void jButtonQuitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQuitterActionPerformed
         System.exit(0);
     }//GEN-LAST:event_jButtonQuitterActionPerformed
+
+    private void jButtonDHCPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDHCPActionPerformed
+        revenirDHCP();
+    }//GEN-LAST:event_jButtonDHCPActionPerformed
 
     /**
      * @param args the command line arguments
@@ -194,6 +212,7 @@ public class IHM extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonDHCP;
     private javax.swing.JButton jButtonDefinirCarte;
     private javax.swing.JButton jButtonQuitter;
     private javax.swing.JButton jButtonScan;
@@ -335,7 +354,7 @@ public class IHM extends javax.swing.JFrame {
     * Permet de détecter les cartes réseaux et leur adresses IPv4 associés (alias compris)
     *
      */
-    private void choisirSaCarteReseau() {
+    private void choisirSaCarteReseau(boolean choisirCarte) {
         jTextAreaAffichage.setText("");
         //1 Choisir sa carte reseau
         final Process p_ipconfig = commandLineInterfaceService.executeCommand("cmd /c ipconfig");
@@ -344,13 +363,16 @@ public class IHM extends javax.swing.JFrame {
         affichageCmd(p_ipconfig);
         compteurInterface = 0;
         //Choisir la carte reseau a changer
-        String reseauName = JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]");
-        if (regex.verifierNombre(reseauName) && Integer.parseInt(reseauName) <= camera.getListeCarteReseau().size()) {
-            camera.setCarteReseau(camera.getListeCarteReseau().get(Integer.parseInt(reseauName)));
-            jTextAreaAffichage.append("------------------------------------------------\nCarte définie : " + camera.getCarteReseau() + "\n");
-            jButtonScan.setEnabled(true);
-        } else {
-            jTextAreaAffichage.append("------------------------------------------------\nAucune Carte sélectionnée");
+        if (choisirCarte) {
+            String reseauName = JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]");
+            if (regex.verifierNombre(reseauName) && Integer.parseInt(reseauName) <= camera.getListeCarteReseau().size()) {
+                camera.setCarteReseau(camera.getListeCarteReseau().get(Integer.parseInt(reseauName)));
+                jTextAreaAffichage.append("------------------------------------------------\nCarte définie : " + camera.getCarteReseau() + "\n");
+                jButtonScan.setEnabled(true);
+                jButtonDHCP.setEnabled(true);
+            } else {
+                jTextAreaAffichage.append("------------------------------------------------\nAucune Carte sélectionnée");
+            }
         }
     }
 
@@ -365,7 +387,7 @@ public class IHM extends javax.swing.JFrame {
             jTextAreaAffichage.setText("");
             if (regex.verifierIP(jTextFieldIP.getText())) {
                 nouvelleAdresse = jTextFieldIP.getText();
-                //Détermine le masque automatiquement ainsi que la passerelle si besoin
+                //Détermine le masque automatiquement
                 String mask = convertisseurIPService.getIPv4Mask(nouvelleAdresse);
                 //Détermine l'ip reseau
                 String[] splitIP = nouvelleAdresse.split("\\.");
@@ -396,5 +418,17 @@ public class IHM extends javax.swing.JFrame {
         this.commandLineInterfaceService = commandLineInterfaceService;
         this.camera = camera;
         this.regex = regex;
+    }
+
+    private void revenirDHCP() {
+        try {
+            //Changer son adresse IP
+            String commande = "elevate.exe powershell.exe netsh interface ip set address “" + camera.getCarteReseau() + "” dhcp";
+            commandLineInterfaceService.executeCommand(commande);
+            Thread.sleep(3500);
+            choisirSaCarteReseau(false);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(IHM.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
