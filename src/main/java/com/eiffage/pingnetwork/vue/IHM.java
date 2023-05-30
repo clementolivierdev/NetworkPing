@@ -440,6 +440,7 @@ public class IHM extends javax.swing.JFrame {
             commandLineInterfaceService.executeCommand(commande);
             Thread.sleep(3500);
             choisirSaCarteReseau(false);
+            definirSonIP();
         } catch (InterruptedException ex) {
             Logger.getLogger(IHM.class.getName()).log(Level.SEVERE, null, ex);
         }
