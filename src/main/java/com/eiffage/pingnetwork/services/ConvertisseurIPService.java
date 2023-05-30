@@ -18,14 +18,14 @@ public class ConvertisseurIPService {
         String checkclass = ip.substring(0, 3);
         int cc = Integer.parseInt(checkclass);
         String mask = null;
-        if (cc > 0 && cc < 224) {
+        if (cc > 0 && cc < 224) { // CLASSE A
             if (cc < 128) {
                 mask = "255.0.0.0";
             }
-            if (cc > 127 && cc < 192) {
+            if (cc > 127 && cc < 192) { // CLASSE B
                 mask = "255.255.0.0";
             }
-            if (cc > 191) {
+            if (cc > 191) { // CLASSE C
                 mask = "255.255.255.0";
             }
         }
