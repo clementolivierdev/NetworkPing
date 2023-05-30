@@ -9,9 +9,10 @@ import java.util.List;
  */
 public class Camera {
 
-    private List<String> listeAdresseMacHanwha = new ArrayList<>();
-    private List<String> listeAdresseMacUniview = new ArrayList<>();
-    private List<String> listeAdresseMacAntenne = new ArrayList<>();
+    private final List<String> listeAdresseMacHanwha = new ArrayList<>();
+    private final List<String> listeAdresseMacUniview = new ArrayList<>();
+    private final List<String> listeAdresseMacAntenne = new ArrayList<>();
+    private final List<String> listeAdresseMacPlanet = new ArrayList<>();
     private List<String> listeCarteReseau = new ArrayList<>();
     private String carteReseau;
 
@@ -23,10 +24,19 @@ public class Camera {
         //UNIVIEW
         this.listeAdresseMacUniview.add("6C-F1-7E");
         this.listeAdresseMacUniview.add("48-EA-63");
+        //PLANET
+        this.listeAdresseMacPlanet.add("00-30-4F");
+        this.listeAdresseMacPlanet.add("00-12-FC");
+        this.listeAdresseMacPlanet.add("00-16-4C");
+        this.listeAdresseMacPlanet.add("A8-F7-E0");
     }
 
     public List<String> getListeAdresseMacHanwha() {
         return listeAdresseMacHanwha;
+    }
+
+    public List<String> getListeAdresseMacPlanet() {
+        return listeAdresseMacPlanet;
     }
 
     public String getCarteReseau() {
