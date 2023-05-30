@@ -366,8 +366,9 @@ public class IHM extends javax.swing.JFrame {
         affichageCmd(p_ipconfig);
         //Choisir la carte reseau a changer
         if (choisirCarte) {
-            compteurInterface = Integer.parseInt(JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]"));
-            if (regex.verifierNombre(String.valueOf(compteurInterface)) && compteurInterface <= camera.getListeCarteReseau().size()) {
+            String numeroCarteReseau = JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]");
+            if (regex.verifierNombre(numeroCarteReseau) && Integer.parseInt(numeroCarteReseau) <= camera.getListeCarteReseau().size()) {
+                compteurInterface = Integer.parseInt(numeroCarteReseau);
                 camera.setCarteReseau(camera.getListeCarteReseau().get(compteurInterface));
                 jTextAreaAffichage.append("------------------------------------------------\nCarte définie : " + camera.getCarteReseau() + "\n");
                 jButtonScan.setEnabled(true);
@@ -397,6 +398,7 @@ public class IHM extends javax.swing.JFrame {
                 StringBuilder monReseau = new StringBuilder();
                 monReseau.append(splitIP[0]).append(".").append(splitIP[1]).append(".").append(splitIP[2]).append(".");
                 //Changer son adresse IP
+                System.out.println("bonne ip : " + nouvelleAdresse);
                 String commande = "elevate.exe powershell.exe netsh interface ip set address “" + camera.getCarteReseau() + "” static " + nouvelleAdresse + " " + mask;
                 commandLineInterfaceService.executeCommand(commande);
                 Thread.sleep(4000);
