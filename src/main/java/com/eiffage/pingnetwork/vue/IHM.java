@@ -2,6 +2,8 @@ package com.eiffage.pingnetwork.vue;
 
 import com.eiffage.pingnetwork.entities.Camera;
 import com.eiffage.pingnetwork.services.*;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,6 +26,7 @@ public class IHM extends javax.swing.JFrame {
     private ConvertisseurIPService convertisseurIPService;
     private Camera camera;
     private RegexService regex;
+    private final Image icon = Toolkit.getDefaultToolkit().getImage("eiffageLogo.png");
 
     private List<String> listeIPReseau = new ArrayList<>();
 
@@ -34,6 +37,7 @@ public class IHM extends javax.swing.JFrame {
     //Constructeur
     public IHM() {
         initComponents();
+        this.setIconImage(icon);
         jButtonScan.setEnabled(false);
         jButtonDHCP.setEnabled(false);
     }
