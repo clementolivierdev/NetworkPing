@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Classe Caméra qui stocke les adresses mac & carte réseau
  *
- * @author olicl
+ * @author clement olivier
+ * @date 30-05-2023
  */
 public class Camera {
 
