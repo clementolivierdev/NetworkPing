@@ -92,7 +92,7 @@ public class IHM extends javax.swing.JFrame {
 
         jLabel2.setText("type d'équipements :");
 
-        jComboBoxEquipement.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tout", "Hanwha", "Uniview", "Antenne" }));
+        jComboBoxEquipement.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tout", "Hanwha", "Uniview", "Planet", "Antenne" }));
 
         jButtonDHCP.setText("DHCP");
         jButtonDHCP.addActionListener(new java.awt.event.ActionListener() {
@@ -307,25 +307,32 @@ public class IHM extends javax.swing.JFrame {
                             jTextAreaAffichage.append(line + "\n");
                         }
 
-                        if (line.contains("dynamique") && lecture == true) {
+                        if (lecture == true) {
                             switch (modelEquipement) {
                                 case "Hanwha" -> {
                                     for (String s : camera.getListeAdresseMacHanwha()) {
-                                        if (line.contains(s)) {
+                                        if (line.toLowerCase().contains(s.toLowerCase())) {
                                             jTextAreaAffichage.append(line + "\n");
                                         }
                                     }//FIN FOR
                                 }
                                 case "Uniview" -> {
                                     for (String s : camera.getListeAdresseMacUniview()) {
-                                        if (line.contains(s)) {
+                                        if (line.toLowerCase().contains(s.toLowerCase())) {
                                             jTextAreaAffichage.append(line + "\n");
                                         }
                                     }//FIN FOR
                                 }
                                 case "Antenne" -> {
                                     for (String s : camera.getListeAdresseMacAntenne()) {
-                                        if (line.contains(s)) {
+                                        if (line.toLowerCase().contains(s.toLowerCase())) {
+                                            jTextAreaAffichage.append(line + "\n");
+                                        }
+                                    }//FIN FOR
+                                }
+                                case "Planet" -> {
+                                    for (String s : camera.getListeAdresseMacPlanet()) {
+                                        if (line.toLowerCase().contains(s.toLowerCase())) {
                                             jTextAreaAffichage.append(line + "\n");
                                         }
                                     }//FIN FOR
@@ -398,7 +405,6 @@ public class IHM extends javax.swing.JFrame {
                 StringBuilder monReseau = new StringBuilder();
                 monReseau.append(splitIP[0]).append(".").append(splitIP[1]).append(".").append(splitIP[2]).append(".");
                 //Changer son adresse IP
-                System.out.println("bonne ip : " + nouvelleAdresse);
                 String commande = "elevate.exe powershell.exe netsh interface ip set address “" + camera.getCarteReseau() + "” static " + nouvelleAdresse + " " + mask;
                 commandLineInterfaceService.executeCommand(commande);
                 Thread.sleep(4000);
