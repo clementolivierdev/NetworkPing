@@ -16,9 +16,13 @@ public class Camera {
     private String carteReseau;
 
     public Camera() {
+        //HANWHA
         this.listeAdresseMacHanwha.add("e4-30-22");
         this.listeAdresseMacHanwha.add("00-09-18");
         this.listeAdresseMacHanwha.add("00-16-6c");
+        //UNIVIEW
+        this.listeAdresseMacUniview.add("6C-F1-7E");
+        this.listeAdresseMacUniview.add("48-EA-63");
     }
 
     public List<String> getListeAdresseMacHanwha() {
@@ -48,7 +52,5 @@ public class Camera {
     public List<String> getListeAdresseMacAntenne() {
         return listeAdresseMacAntenne;
     }
-    
-    
 
 }
