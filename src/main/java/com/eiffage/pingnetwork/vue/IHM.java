@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -22,6 +24,8 @@ public class IHM extends javax.swing.JFrame {
     private ConvertisseurIPService convertisseurIPService;
     private Camera camera;
     private RegexService regex;
+
+    private List<String> listeIPReseau = new ArrayList<>();
 
     private String modelEquipement = "";
     private String nouvelleAdresse = "";
@@ -166,6 +170,7 @@ public class IHM extends javax.swing.JFrame {
     private void jButtonDefinirCarteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDefinirCarteActionPerformed
         modelEquipement = jComboBoxEquipement.getItemAt(jComboBoxEquipement.getSelectedIndex());
         choisirSaCarteReseau(true);
+        definirSonIP();
     }//GEN-LAST:event_jButtonDefinirCarteActionPerformed
 
     private void jButtonQuitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQuitterActionPerformed
@@ -259,6 +264,7 @@ public class IHM extends javax.swing.JFrame {
                         }
 
                         if (line.contains("Adresse IPv4") && lecture == true) {
+                            listeIPReseau.add(line.substring(44, line.length()));
                             jTextAreaAffichage.append(line + "\n");
                         }
 
@@ -337,13 +343,9 @@ public class IHM extends javax.swing.JFrame {
                         }
 
                     }
+                    input.close();
                 } catch (IOException e) {
                     System.out.println("Trouver mon ip : " + e);
-                }
-                try {
-                    input.close();
-                } catch (IOException ex) {
-                    System.out.println("Trouver mon ip : " + ex);
                 }
             }
         };
@@ -360,16 +362,17 @@ public class IHM extends javax.swing.JFrame {
         final Process p_ipconfig = commandLineInterfaceService.executeCommand("cmd /c ipconfig");
         //Lecture Ethernet puis 6 lgnes apres stop
         //Chaque Adresse IP v4 dans une Liste au cas où l'utilisateur a des alias
-        affichageCmd(p_ipconfig);
         compteurInterface = 0;
+        affichageCmd(p_ipconfig);
         //Choisir la carte reseau a changer
         if (choisirCarte) {
-            String reseauName = JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]");
-            if (regex.verifierNombre(reseauName) && Integer.parseInt(reseauName) <= camera.getListeCarteReseau().size()) {
-                camera.setCarteReseau(camera.getListeCarteReseau().get(Integer.parseInt(reseauName)));
+            compteurInterface = Integer.parseInt(JOptionPane.showInputDialog(this, "Entrez le numéro de carte à modifier : [0,1,..]"));
+            if (regex.verifierNombre(String.valueOf(compteurInterface)) && compteurInterface <= camera.getListeCarteReseau().size()) {
+                camera.setCarteReseau(camera.getListeCarteReseau().get(compteurInterface));
                 jTextAreaAffichage.append("------------------------------------------------\nCarte définie : " + camera.getCarteReseau() + "\n");
                 jButtonScan.setEnabled(true);
                 jButtonDHCP.setEnabled(true);
+                definirSonIP();
             } else {
                 jTextAreaAffichage.append("------------------------------------------------\nAucune Carte sélectionnée");
             }
@@ -398,13 +401,14 @@ public class IHM extends javax.swing.JFrame {
                 commandLineInterfaceService.executeCommand(commande);
                 Thread.sleep(4000);
                 //3 ping son reseau
-                commandLineInterfaceService.executeCommand("cmd.exe /C FOR /L %i in (1,1,20) do @ping " + monReseau + "%i -w 1 -n 1");
-                Thread.sleep(4000);
+                commandLineInterfaceService.executeCommand("cmd.exe /C FOR /L %i in (1,1,40) do @ping " + monReseau + "%i -w 1 -n 1");
+                Thread.sleep(10000);
                 commandLineInterfaceService.executeCommand("cmd /C ping " + monReseau + "255 -w 1 -n 1");
                 Thread.sleep(500);
                 final Process ping_arp = commandLineInterfaceService.executeCommand("arp -a");
                 affichageCmdArp(ping_arp);
                 Thread.sleep(500);
+                definirSonIP();
             } else {
                 jTextAreaAffichage.append("------------------------------------------------\nVérifiez l'adresse IP inscrite");
             }
@@ -430,5 +434,9 @@ public class IHM extends javax.swing.JFrame {
         } catch (InterruptedException ex) {
             Logger.getLogger(IHM.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void definirSonIP() {
+        jTextFieldIP.setText(listeIPReseau.get(compteurInterface));
     }
 }
