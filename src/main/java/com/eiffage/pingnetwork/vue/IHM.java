@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  * Fenêtre graphique
  *
  * @author clement olivier
- * @date 25-05-2023
+ * @date 30-05-2023
  */
 public class IHM extends javax.swing.JFrame {
 
@@ -28,7 +28,7 @@ public class IHM extends javax.swing.JFrame {
     private RegexService regex;
     private final Image icon = Toolkit.getDefaultToolkit().getImage("eiffageLogo.png");
 
-    private List<String> listeIPReseau = new ArrayList<>();
+    private final List<String> listeIPReseau = new ArrayList<>();
 
     private String modelEquipement = "";
     private String nouvelleAdresse = "";
@@ -392,7 +392,7 @@ public class IHM extends javax.swing.JFrame {
     }
 
     /*
-    * Permet de ping les 20 premières adresses du réseau et la dernière .255 puis affiche les équipements connectés
+    * Permet de ping les 40 premières adresses du réseau et la dernière .255 puis affiche les équipements connectés
     *
      */
     private void scannerSonReseau() {
@@ -429,13 +429,10 @@ public class IHM extends javax.swing.JFrame {
         }
     }
 
-    public void setClasses(CommandLineInterfaceService commandLineInterfaceService, ConvertisseurIPService convertisseurIPService, Camera camera, RegexService regex) {
-        this.convertisseurIPService = convertisseurIPService;
-        this.commandLineInterfaceService = commandLineInterfaceService;
-        this.camera = camera;
-        this.regex = regex;
-    }
-
+    /*
+    * Permet de passer d'une adresse ip statique à dynamique
+    *
+     */
     private void revenirDHCP() {
         try {
             //Changer son adresse IP
@@ -448,7 +445,18 @@ public class IHM extends javax.swing.JFrame {
         }
     }
 
+    /*
+    * Permet de ré-initialiser le jtexteField à la bonne adresse IPv4
+    *
+     */
     private void definirSonIP() {
         jTextFieldIP.setText(listeIPReseau.get(compteurInterface));
+    }
+
+    public void setClasses(CommandLineInterfaceService commandLineInterfaceService, ConvertisseurIPService convertisseurIPService, Camera camera, RegexService regex) {
+        this.convertisseurIPService = convertisseurIPService;
+        this.commandLineInterfaceService = commandLineInterfaceService;
+        this.camera = camera;
+        this.regex = regex;
     }
 }

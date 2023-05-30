@@ -6,13 +6,12 @@ import java.util.regex.Pattern;
  * Classe de Regex
  *
  * @author Clément Olivier
- * @date 26-06-2023
+ * @date 30-06-2023
  */
 public class RegexService {
 
     /**
-     * Permet de vérifier si le String utilisé contient uniquement des Chiffres
-     * et des points
+     * Permet de vérifier si le String utilisé est une adresse IP
      *
      * @param ip Adresse IP
      * @return Boolean vérification
