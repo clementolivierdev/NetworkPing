@@ -18,6 +18,15 @@ L'utilisateur peut :
 - Ping les 40 premières adresses de son réseau
 - Afficher un type d'équipement précis
 
+Liste des équipements détectables :
+
+| Nom du modèle   | Fonctionne    |
+|-----------------|---------------|
+| Hanwha          | oui           |
+| Uniview         | à confirmer   |
+| Planet          | à confirmer   |
+| Antennes        | non           |
+
 Dernière version stable: **```1.2.8```**
 
 ---
